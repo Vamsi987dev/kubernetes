@@ -36,15 +36,14 @@ metadata:
     project: expense
 spec:
   selector:
-    labels:
       name: mysql
       tier: db
       project: expense
   ports:
-    name: mysql-ports
-    protocol: tcp
-    port: 3306
-    targetPort: 3306
+    - name: mysql-ports
+      protocol: tcp
+      port: 3306
+      targetPort: 3306
 
 
 
