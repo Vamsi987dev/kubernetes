@@ -28,7 +28,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql-Service
+  name: mysql
   namespace: expense
   labels:  
     name: mysql
@@ -41,7 +41,7 @@ spec:
       project: expense
   ports:
     - name: mysql-ports
-      protocol: tcp
+      protocol: TCP
       port: 3306
       targetPort: 3306
 
