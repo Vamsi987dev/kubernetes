@@ -24,5 +24,30 @@ spec:
       containers:
       - name: mysql-expense
         image: vamsidocker012/mysql:v1 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-Service
+  namespace: expense
+  labels:  
+    name: mysql
+    tier: db
+    project: expense
+spec:
+  selector:
+    labels:
+      name: mysql
+      tier: db
+      project: expense
+  ports:
+    name: mysql-ports
+    protocol: tcp
+    port: 3306
+    targetPort: 3306
+
+
+
+    
       
 
