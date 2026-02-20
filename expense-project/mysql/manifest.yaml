@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Deployment
+metadata:
+  namespace: expense
+  name: mysql
+  tier: db
+  project: expense
+  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: mysql
+      tier: db
+      project: expense
+  template:
+    metadata:
+      labels:
+        name: mysql
+        tier: db
+        project: expense 
+    spec:
+      containers:
+      - name: mysql-expense
+        image: vamsidocker012/mysql:v1 
+      
+
