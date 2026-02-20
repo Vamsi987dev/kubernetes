@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: expense
+  labels:
+    name: frontend
+    tier: web
+    project: expense  
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: frontend
+      tier: web
+      project: expense
+  template:
+    metadata:
+      labels:
+        name: frontend
+        tier: web
+        project: expense 
+    spec:
+      containers:
+      - name: frontend-expense
+        image: vamsidocker012/frontend:v1 
+        resources:  
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi
+    
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: expense
+  labels:  
+    name: frontend
+    tier: web
+    project: expense
+spec:
+  type: LoadBalancer
+  selector:
+      name: frontend
+      tier: web
+      project: expense
+  ports:
+    - name: frontend-ports
+      protocol: TCP
+      port: 80
+      targetPort: 80
+
+
+
+    
+      
+
