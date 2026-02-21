@@ -1,49 +1,76 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name:  mysql-headless
+  namespace: expense
+spec:
+  clusterIP: None
+  selector: 
+    name: mysql
+    tier: db
+    project: expense
+    
+  ports: 
+    - name: mysql-service-port
+      protocol: TCP
+      port: 3306
+      targetPort: 3306
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name:  mysql
+  namespace: expense
+spec:
+  selector: 
+    name: mysql
+    tier: db
+    project: expense
+    
+  ports: 
+    - name: mysql-service-port
+      protocol: TCP
+      port: 3306
+      targetPort: 3306
+---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: mysql
   namespace: expense
-  labels:
-    name: mysql
-    tier: db
-    project: expense  
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       name: mysql
       tier: db
       project: expense
+  serviceName: mysql-headless
   template:
     metadata:
-      labels:
+      labels:  
         name: mysql
         tier: db
-        project: expense 
+        project: expense
     spec:
-      containers:
-      - name: mysql-expense
-        image: vamsidocker012/mysql:v1 
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: mysql
-  namespace: expense
-  labels:  
-    name: mysql
-    tier: db
-    project: expense
-spec:
-  selector:
+      containers: 
+      - name: mysql
+        image: vamsidocker012/mysql:v1
+        volumeMounts:
+        - name: mysql
+          mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+  - metadata:
       name: mysql
-      tier: db
-      project: expense
-  ports:
-    - name: mysql-ports
-      protocol: TCP
-      port: 3306
-      targetPort: 3306
+    spec:
+      accessModes: [ "ReadWriteOnce"]
+      storageClassName: "expense-ebs"
+      resources: 
+        requests:
+          storage: 1Gi
+
+---
 
 
 
