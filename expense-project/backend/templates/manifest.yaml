@@ -1,70 +1,82 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend
+  namespace: expense
+data:
+  DB_HOST: mysql
+
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: backend
   namespace: expense
   labels:
-    name: frontend
-    tier: web
+    name: backend
+    tier: app
     project: expense  
 spec:
-  replicas: 2
+  replicas: {{ .Values.deployment.replicas }}
   selector:
     matchLabels:
-      name: frontend
-      tier: web
+      name: backend
+      tier: app
       project: expense
   template:
     metadata:
       labels:
-        name: frontend
-        tier: web
+        name: backend
+        tier: app
         project: expense 
     spec:
       containers:
-      - name: frontend-expense
-        image: vamsidocker012/frontend:v1 
-        resources:  
+      - name: backend-expense
+        image: vamsidocker012/backend:{{ .Values.deployment.imageVersion }} 
+        resources:
           requests:
             cpu: 100m
             memory: 128Mi
           limits:
             cpu: 100m
             memory: 128Mi
+        envFrom:
+        - configMapRef:
+            name: backend
     
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend
+  name: backend
   namespace: expense
   labels:  
-    name: frontend
-    tier: web
+    name: backend
+    tier: app
     project: expense
 spec:
-  type: LoadBalancer
   selector:
-      name: frontend
-      tier: web
+      name: backend
+      tier: app
       project: expense
   ports:
-    - name: frontend-ports
+    - name: backend-ports
       protocol: TCP
-      port: 80
-      targetPort: 80
-
+      port: 8080
+      targetPort: 8080
 ---
+
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: frontend
+  name: backend
   namespace: expense
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: frontend
+    name: backend
   minReplicas: 1
   maxReplicas: 10
   targetCPUUtilizationPercentage: 15

@@ -58,7 +58,7 @@ spec:
         fsGroup: 999
       containers: 
       - name: mysql
-        image: vamsidocker012/mysql:v1
+        image: vamsidocker012/mysql:{{ .Values.deployment.imageVersion }}
         volumeMounts:
         - name: mysql
           mountPath: /var/lib/mysql
